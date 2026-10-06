@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Que criança você foi?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#FFF3E8; --field:#0B0B0D;
+  --card:#18171B; --card-sunk:#111013;
+  --accent:#F3652B; --blue:#4D80FF; --green:#27C08A;
+  --yellow:#FFC53D; --pink:#FF5FA2;
+  --muted:#A2917F;
+  --stage:#FFF6E6; --sv-ink:#1D1710;
+  --radius:14px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--ink); background:var(--field);
+  background-image:
+    radial-gradient(rgba(243,101,43,.26) 1.7px, transparent 1.8px),
+    radial-gradient(rgba(77,128,255,.18) 1.7px, transparent 1.8px),
+    radial-gradient(rgba(255,197,61,.16) 1.7px, transparent 1.8px);
+  background-size:30px 30px,30px 30px,30px 30px;
+  background-position:0 0,10px 15px,20px 7px;
+  line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:620px;margin:0 auto;padding:28px 18px 56px}
+h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;line-height:1.03;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(2.1rem,8.4vw,3.2rem)}
+h2{font-size:1.6rem}
+p{margin:0}
+
+.panel{background:var(--card);border:3px solid var(--accent);border-radius:var(--radius);box-shadow:6px 6px 0 var(--accent);padding:22px}
+.stage{
+  background:var(--stage);border:3px solid var(--sv-ink);border-radius:var(--radius);
+  box-shadow:6px 6px 0 var(--accent);aspect-ratio:1/1;max-width:290px;margin:0 auto;
+  display:grid;place-items:center;overflow:hidden;
+}
+.stage svg{width:86%;height:86%;display:block}
+.stage.text{padding:24px;aspect-ratio:auto;max-width:460px;min-height:150px}
+.stage.text b{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.3rem;text-align:center;color:var(--sv-ink);line-height:1.2}
+
+.badge{display:inline-block;background:var(--accent);color:#0B0B0D;border:3px solid var(--accent);border-radius:999px;padding:5px 14px;font-weight:700;font-size:.82rem}
+.hero{display:flex;align-items:flex-start;gap:14px;margin:18px 0 10px}
+.qmark{flex:none;width:66px;height:66px;display:grid;place-items:center;background:var(--accent);color:#0B0B0D;border:3px solid var(--ink);border-radius:16px;box-shadow:5px 5px 0 var(--ink);font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:2.6rem;line-height:1;transform:rotate(-7deg)}
+.lede{margin-top:14px;font-size:1.02rem;max-width:46ch}
+.rules{margin:0;padding:0;list-style:none;display:grid;gap:9px}
+.rules li{display:flex;gap:10px;align-items:flex-start;font-size:.95rem}
+.tick{flex:none;width:9px;height:9px;margin-top:7px;background:var(--ink);border-radius:2px;transform:rotate(45deg)}
+
+label.field{display:block;margin:22px 0 7px;font-weight:600;font-size:.95rem}
+input[type="text"]{width:100%;font:inherit;font-size:1.05rem;font-weight:600;padding:13px 15px;color:var(--ink);background:var(--card-sunk);border:3px solid var(--ink);border-radius:11px}
+input[type="text"]::placeholder{color:var(--muted);font-weight:400}
+input:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+
+.btn{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.12rem;width:100%;padding:15px 18px;margin-top:16px;color:#0B0B0D;background:var(--accent);border:3px solid var(--ink);border-radius:12px;box-shadow:5px 5px 0 var(--ink);cursor:pointer;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--ink)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.note{font-size:.86rem;color:var(--muted);margin-top:12px}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.counter{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.05rem}
+.counter span.of{color:var(--muted)}
+.pips{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;max-width:60%}
+.pip{width:10px;height:10px;border:2px solid var(--ink);border-radius:3px;background:transparent}
+.pip.hit{background:var(--green)}
+.pip.miss{background:var(--accent)}
+.pip.now{background:var(--ink)}
+
+.clock{height:12px;margin:14px auto 0;max-width:290px;background:var(--card-sunk);border:3px solid var(--ink);border-radius:999px;overflow:hidden}
+.clock i{display:block;height:100%;width:100%;background:var(--green);transition:width .1s linear}
+.clock.warn i{background:var(--accent)}
+
+.prompt{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.22rem;text-align:center;margin:18px 0 14px}
+.opts{display:grid;gap:10px}
+@media (min-width:520px){.opts{grid-template-columns:1fr 1fr}}
+.opt{font:inherit;font-weight:600;font-size:1rem;text-align:left;padding:14px 16px;color:var(--ink);background:var(--card);border:3px solid var(--ink);border-radius:11px;box-shadow:4px 4px 0 var(--ink);cursor:pointer;transition:transform .08s,box-shadow .08s}
+.opt:nth-child(1){border-color:var(--accent);box-shadow:4px 4px 0 var(--accent)}
+.opt:nth-child(2){border-color:var(--blue);box-shadow:4px 4px 0 var(--blue)}
+.opt:nth-child(3){border-color:var(--yellow);box-shadow:4px 4px 0 var(--yellow)}
+.opt:nth-child(4){border-color:var(--green);box-shadow:4px 4px 0 var(--green)}
+.opt:active{transform:translate(3px,3px);box-shadow:1px 1px 0 currentColor}
+.opt[disabled]{cursor:default}
+.opt.right{background:var(--green);border-color:var(--green);color:#06120D;box-shadow:4px 4px 0 var(--ink)}
+.opt.wrong{background:var(--accent);border-color:var(--accent);color:#0B0B0D;box-shadow:4px 4px 0 var(--ink)}
+.opt.fade{opacity:.32;box-shadow:none}
+
+.fact{margin-top:16px;padding:14px 16px;background:var(--card-sunk);border:3px dashed var(--ink);border-radius:11px;font-size:.95rem}
+.fact b{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;display:block;margin-bottom:3px}
+
+/* parte 2 */
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.chip{font:inherit;font-weight:600;font-size:.94rem;padding:10px 14px;color:var(--ink);background:var(--card);border:3px solid var(--ink);border-radius:999px;cursor:pointer;transition:transform .08s,box-shadow .08s;box-shadow:3px 3px 0 var(--ink)}
+.chip:nth-child(5n+1){border-color:var(--accent);box-shadow:3px 3px 0 var(--accent)}
+.chip:nth-child(5n+2){border-color:var(--blue);box-shadow:3px 3px 0 var(--blue)}
+.chip:nth-child(5n+3){border-color:var(--yellow);box-shadow:3px 3px 0 var(--yellow)}
+.chip:nth-child(5n+4){border-color:var(--green);box-shadow:3px 3px 0 var(--green)}
+.chip:nth-child(5n+5){border-color:var(--pink);box-shadow:3px 3px 0 var(--pink)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#0B0B0D;box-shadow:3px 3px 0 var(--ink)}
+.chip:active{transform:translate(2px,2px);box-shadow:1px 1px 0 currentColor}
+
+/* resultado */
+.score{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:clamp(3.2rem,15vw,4.6rem);line-height:.9;color:var(--accent)}
+.era{margin-top:20px;padding:18px 20px;background:var(--blue);color:#05112E;border:3px solid var(--ink);border-radius:var(--radius);box-shadow:6px 6px 0 var(--ink)}
+.era h3{font-size:clamp(1.5rem,6vw,2.1rem)}
+.era p{margin-top:7px;font-size:.98rem;opacity:.9}
+.share{margin-top:20px;padding:20px;background:var(--card);border:3px solid var(--accent);border-radius:var(--radius);box-shadow:6px 6px 0 var(--accent)}
+.share h3{font-size:1.25rem;margin-bottom:8px}
+.share p{font-size:.97rem;line-height:1.55}
+.share p+p{margin-top:10px}
+.share b{color:var(--accent)}
+.hidden{display:none}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<section id="s-start">
+  <span class="badge">Dia das Crianças na Azion</span>
+  <div class="hero"><div class="qmark">?</div><h1>Que criança você foi?</h1></div>
+  <p class="lede">Dezoito perguntas sobre coisas que você reconhece na hora e não lembra o nome faz alguns bons anos.</p>
+  <div class="panel" style="margin-top:22px">
+    <ul class="rules">
+      <li><i class="tick"></i><span>18 perguntas, quatro respostas cada.</span></li>
+      <li><i class="tick"></i><span>20 segundos por rodada. Dá pra pesquisar, mas aí não tem graça.</span></li>
+      <li><i class="tick"></i><span>Responder rápido vale mais ponto.</span></li>
+    </ul>
+    <label class="field" for="name">Seu nome</label>
+    <input type="text" id="name" maxlength="40" placeholder="Seu nome" autocomplete="off" spellcheck="false">
+    <button class="btn" id="go">Começar</button>
+  </div>
+</section>
+
+<section id="s-quiz" class="hidden">
+  <div class="topbar">
+    <div class="counter"><span id="qn">1</span> <span class="of">de 18</span></div>
+    <div class="pips" id="pips"></div>
+  </div>
+  <div class="stage" id="stage"></div>
+  <div class="clock" id="clock"><i id="clockbar"></i></div>
+  <p class="prompt" id="prompt">O que é isso?</p>
+  <div class="opts" id="opts"></div>
+  <div class="fact hidden" id="fact"></div>
+  <button class="btn hidden" id="next">Próxima</button>
+</section>
+
+<section id="s-era" class="hidden">
+  <span class="badge">Última parte</span>
+  <h1 style="margin-top:16px;font-size:clamp(1.8rem,7vw,2.6rem)">Marca tudo que você lembra</h1>
+  <p class="lede">Não vale ponto. É só pra descobrir de que década é a sua infância.</p>
+  <div class="chips" id="chips"></div>
+  <button class="btn" id="done">Ver meu resultado</button>
+</section>
+
+<section id="s-end" class="hidden">
+  <span class="badge" id="verdict">Resultado</span>
+  <div class="panel" style="margin-top:18px">
+    <div class="score" id="finalScore">0</div>
+    <p style="font-weight:600;margin-top:6px" id="finalLine"></p>
+  </div>
+  <div class="era" id="eraBox">
+    <h3 id="eraName"></h3>
+    <p id="eraDesc"></p>
+  </div>
+
+  <div class="share">
+    <h3>Manda print no canal</h3>
+    <p>Tira um print desta tela e posta no <b>office life</b>.</p>
+  </div>
+
+  <button class="btn ghost" id="again">Jogar de novo</button>
+</section>
+
+</div>
+
+<script>
+const INK='var(--sv-ink)';
+const svg=i=>'<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="objeto para adivinhar" stroke-linecap="round" stroke-linejoin="round">'+i+'</svg>';
+
+const ART={
+disquete:svg(`
+<rect x="20" y="16" width="80" height="88" rx="5" fill="#3B5BDB" stroke="${INK}" stroke-width="4"/>
+<rect x="24" y="20" width="11" height="13" fill="#2B4AC4" stroke="${INK}" stroke-width="3"/>
+<rect x="44" y="16" width="36" height="34" fill="#C9CFD9" stroke="${INK}" stroke-width="4"/>
+<rect x="50" y="20" width="11" height="26" fill="#8C95A3" stroke="${INK}" stroke-width="3"/>
+<rect x="32" y="60" width="56" height="42" rx="2" fill="#FFF6E6" stroke="${INK}" stroke-width="4"/>
+<path d="M40 72h40M40 82h30M40 92h36" stroke="${INK}" stroke-width="3"/>`),
+
+cassete:svg(`
+<rect x="12" y="32" width="96" height="58" rx="6" fill="#4C4C56" stroke="${INK}" stroke-width="4"/>
+<rect x="22" y="38" width="76" height="22" rx="2" fill="#FFF6E6" stroke="${INK}" stroke-width="3"/>
+<path d="M30 46h50M30 54h34" stroke="${INK}" stroke-width="2.5"/>
+<rect x="26" y="64" width="68" height="20" rx="3" fill="#2A2A32" stroke="${INK}" stroke-width="3"/>
+<circle cx="44" cy="74" r="7.5" fill="#D9DEE6" stroke="${INK}" stroke-width="3"/>
+<circle cx="76" cy="74" r="7.5" fill="#D9DEE6" stroke="${INK}" stroke-width="3"/>
+<circle cx="44" cy="74" r="2.6" fill="${INK}"/><circle cx="76" cy="74" r="2.6" fill="${INK}"/>
+<path d="M36 90v4M84 90v4" stroke="${INK}" stroke-width="3"/>`),
+
+mouse:svg(`
+<path d="M60 18C60 6 84 10 86 2" fill="none" stroke="${INK}" stroke-width="4"/>
+<rect x="30" y="16" width="60" height="90" rx="28" fill="#EFE8D8" stroke="${INK}" stroke-width="4"/>
+<rect x="46" y="25" width="28" height="12" rx="6" fill="#D8CFBA" stroke="${INK}" stroke-width="3"/>
+<circle cx="60" cy="68" r="21" fill="#D8CFBA" stroke="${INK}" stroke-width="4"/>
+<circle cx="60" cy="68" r="13" fill="#2A2A32" stroke="${INK}" stroke-width="3"/>
+<path d="M60 47v6M60 83v6M39 68h6M75 68h6" stroke="${INK}" stroke-width="3"/>
+<circle cx="40" cy="96" r="4" fill="#D8CFBA" stroke="${INK}" stroke-width="2.5"/>
+<circle cx="80" cy="96" r="4" fill="#D8CFBA" stroke="${INK}" stroke-width="2.5"/>`),
+
+telefone:svg(`
+<rect x="18" y="20" width="22" height="26" rx="7" fill="#2A2A32" stroke="${INK}" stroke-width="4"/>
+<rect x="80" y="20" width="22" height="26" rx="7" fill="#2A2A32" stroke="${INK}" stroke-width="4"/>
+<rect x="34" y="26" width="52" height="14" rx="7" fill="#2A2A32" stroke="${INK}" stroke-width="4"/>
+<path d="M22 62 30 50h60l8 12v32a6 6 0 0 1-6 6H28a6 6 0 0 1-6-6Z" fill="#E8552B" stroke="${INK}" stroke-width="4"/>
+<circle cx="60" cy="76" r="20" fill="#FFF6E6" stroke="${INK}" stroke-width="4"/>
+<g fill="#E8552B" stroke="${INK}" stroke-width="2">
+<circle cx="60" cy="63" r="3.1"/><circle cx="69" cy="66" r="3.1"/><circle cx="73" cy="76" r="3.1"/>
+<circle cx="69" cy="86" r="3.1"/><circle cx="60" cy="89" r="3.1"/><circle cx="51" cy="86" r="3.1"/>
+<circle cx="47" cy="76" r="3.1"/><circle cx="51" cy="66" r="3.1"/></g>
+<circle cx="60" cy="76" r="5" fill="#E8552B" stroke="${INK}" stroke-width="3"/>`),
+
+gude:svg(`
+<defs>
+<clipPath id="g1"><circle cx="44" cy="74" r="24"/></clipPath>
+<clipPath id="g2"><circle cx="88" cy="82" r="16"/></clipPath>
+<clipPath id="g3"><circle cx="74" cy="38" r="14"/></clipPath></defs>
+<circle cx="44" cy="74" r="24" fill="#FFF6E6" stroke="${INK}" stroke-width="4"/>
+<path d="M24 62c16-8 16 28 42 18" fill="none" stroke="#3B5BDB" stroke-width="11" clip-path="url(#g1)"/>
+<circle cx="44" cy="74" r="24" fill="none" stroke="${INK}" stroke-width="4"/>
+<circle cx="36" cy="64" r="4" fill="#FFF" opacity=".85"/>
+<circle cx="88" cy="82" r="16" fill="#FFF6E6" stroke="${INK}" stroke-width="4"/>
+<path d="M74 74c12-6 12 20 30 12" fill="none" stroke="#E8552B" stroke-width="8" clip-path="url(#g2)"/>
+<circle cx="88" cy="82" r="16" fill="none" stroke="${INK}" stroke-width="4"/>
+<circle cx="74" cy="38" r="14" fill="#FFF6E6" stroke="${INK}" stroke-width="4"/>
+<path d="M62 32c10-6 10 18 26 10" fill="none" stroke="#13835C" stroke-width="7" clip-path="url(#g3)"/>
+<circle cx="74" cy="38" r="14" fill="none" stroke="${INK}" stroke-width="4"/>`),
+
+piao:svg(`
+<path d="M94 42c16 6 11 28-6 29" fill="none" stroke="#2A2A32" stroke-width="4"/>
+<rect x="51" y="16" width="18" height="16" rx="4" fill="#C9883C" stroke="${INK}" stroke-width="4"/>
+<path d="M24 46c0-22 72-22 72 0L60 104Z" fill="#E8552B" stroke="${INK}" stroke-width="4"/>
+<path d="M27 56h66M34 68h52M41 80h38" stroke="${INK}" stroke-width="3" opacity=".55"/>`),
+
+tv:svg(`
+<path d="M46 34 28 8M74 34 92 8" stroke="${INK}" stroke-width="5"/>
+<circle cx="28" cy="8" r="4.5" fill="${INK}"/><circle cx="92" cy="8" r="4.5" fill="${INK}"/>
+<rect x="14" y="32" width="92" height="70" rx="9" fill="#C9883C" stroke="${INK}" stroke-width="4"/>
+<rect x="22" y="40" width="56" height="54" rx="11" fill="#8ECBE8" stroke="${INK}" stroke-width="4"/>
+<path d="M34 46 46 46 32 88Z" fill="#FFF" opacity=".5"/>
+<circle cx="92" cy="52" r="6.5" fill="#FFF6E6" stroke="${INK}" stroke-width="3"/>
+<circle cx="92" cy="72" r="6.5" fill="#FFF6E6" stroke="${INK}" stroke-width="3"/>
+<path d="M26 102v8M94 102v8" stroke="${INK}" stroke-width="5"/>`),
+
+pipa:svg(`
+<path d="M60 8 100 50 60 50Z" fill="#3B5BDB"/><path d="M60 8 20 50 60 50Z" fill="#FFF6E6"/>
+<path d="M60 50 100 50 60 92Z" fill="#E9B03C"/><path d="M60 50 20 50 60 92Z" fill="#E8552B"/>
+<path d="M60 8 100 50 60 92 20 50Z" fill="none" stroke="${INK}" stroke-width="4"/>
+<path d="M60 8v84M20 50h80" stroke="${INK}" stroke-width="3"/>
+<path d="M60 92c8 8-8 12 0 20" fill="none" stroke="${INK}" stroke-width="3.5"/>
+<path d="M56 100h8M58 110h8" stroke="#E8552B" stroke-width="4"/>`),
+
+suco:svg(`
+<path d="M32 30h56v76a4 4 0 0 1-4 4H36a4 4 0 0 1-4-4Z" fill="#E8552B" stroke="${INK}" stroke-width="4"/>
+<path d="M32 30 44 42h32l12-12" fill="none" stroke="${INK}" stroke-width="3" opacity=".6"/>
+<rect x="40" y="52" width="40" height="36" rx="3" fill="#FFF6E6" stroke="${INK}" stroke-width="3.5"/>
+<circle cx="60" cy="67" r="10" fill="#E9B03C" stroke="${INK}" stroke-width="3"/>
+<path d="M60 57v-4" stroke="#13835C" stroke-width="3.5"/>
+<path d="M46 82h28" stroke="${INK}" stroke-width="3"/>
+<g transform="rotate(14 72 22)">
+<rect x="67" y="2" width="10" height="40" rx="5" fill="#FFF6E6" stroke="${INK}" stroke-width="3.5"/>
+<path d="M68 13h8M68 24h8" stroke="#E8552B" stroke-width="3"/></g>`),
+
+gloss:svg(`
+<g>
+<ellipse cx="24" cy="98" rx="17" ry="7" fill="#E07CA0" stroke="${INK}" stroke-width="3.5"/>
+<path d="M7 92v6a17 7 0 0 0 34 0v-6Z" fill="#F2A8C0" stroke="${INK}" stroke-width="3.5"/>
+<ellipse cx="24" cy="92" rx="17" ry="7" fill="#F8C4D6" stroke="${INK}" stroke-width="3.5"/></g>
+<ellipse cx="68" cy="88" rx="26" ry="10" fill="#E07CA0" stroke="${INK}" stroke-width="4"/>
+<path d="M42 60v28a26 10 0 0 0 52 0V60Z" fill="#F2A8C0" stroke="${INK}" stroke-width="4"/>
+<ellipse cx="68" cy="60" rx="26" ry="10" fill="#FFF6E6" stroke="${INK}" stroke-width="4"/>
+<ellipse cx="68" cy="61" rx="18" ry="6.5" fill="#F0629B" stroke="${INK}" stroke-width="3"/>
+<path d="M100 20l3.4 9.6 9.6 3.4-9.6 3.4L100 46l-3.4-9.6L87 33l9.6-3.4Z" fill="#E9B03C" stroke="${INK}" stroke-width="2.5"/>
+<path d="M82 36l2 5.6 5.6 2-5.6 2L82 51l-2-5.6-5.6-2 5.6-2Z" fill="#FFF6E6" stroke="${INK}" stroke-width="2.5"/>`),
+
+lembrancinha:svg(`
+<path d="M44 48 28 12q32 12 64 0L76 48Z" fill="#F2E4C9" stroke="${INK}" stroke-width="4"/>
+<path d="M40 48c-8 16-10 40-2 52a7 7 0 0 0 6 4h32a7 7 0 0 0 6-4c8-12 6-36-2-52Z" fill="#FFF6E6"/>
+<g stroke="${INK}" stroke-width="2.5" stroke-linejoin="round">
+<ellipse cx="52" cy="72" rx="9" ry="6.5" fill="#E8552B"/><path d="M43 72 37 68v8Z" fill="#E8552B"/><path d="M61 72 67 68v8Z" fill="#E8552B"/>
+<ellipse cx="73" cy="70" rx="8" ry="6" fill="#3B5BDB"/><path d="M65 70 60 66v8Z" fill="#3B5BDB"/><path d="M81 70 86 66v8Z" fill="#3B5BDB"/>
+<ellipse cx="48" cy="92" rx="8" ry="6" fill="#13835C"/><path d="M40 92 35 88v8Z" fill="#13835C"/><path d="M56 92 61 88v8Z" fill="#13835C"/>
+<ellipse cx="71" cy="92" rx="8" ry="6" fill="#E9B03C"/><path d="M63 92 58 88v8Z" fill="#E9B03C"/><path d="M79 92 84 88v8Z" fill="#E9B03C"/>
+</g>
+<path d="M40 48c-8 16-10 40-2 52a7 7 0 0 0 6 4h32a7 7 0 0 0 6-4c8-12 6-36-2-52Z" fill="none" stroke="${INK}" stroke-width="4"/>
+<path d="M42 48h36" stroke="${INK}" stroke-width="4"/>
+<path d="M57 46c-12-10-21 2-8 9" fill="#E8552B" stroke="${INK}" stroke-width="3"/>
+<path d="M63 46c12-10 21 2 8 9" fill="#E8552B" stroke="${INK}" stroke-width="3"/>
+<path d="M56 56 50 72M64 56l6 16" fill="none" stroke="#E8552B" stroke-width="3.5"/>
+<circle cx="60" cy="50" r="5" fill="#E8552B" stroke="${INK}" stroke-width="3"/>`)
+};
+
+const QUESTIONS=[
+{art:'disquete',q:'O que é isso?',answer:'Disquete',
+ options:['Disquete','Cartucho de videogame','Porta-copo','Carteira de CD'],
+ fact:'É o ícone de salvar que você clicou hoje de manhã sem pensar.'},
+{art:'cassete',q:'O que é isso?',answer:'Fita cassete',
+ options:['Fita cassete','Walkie-talkie','Fita VHS','Calculadora'],
+ fact:'Embolou? Lápis na roda e paciência. Primeira recuperação de dados da sua vida.'},
+{text:'“O brinde vinha junto com o lanche.”',q:'Qual era o nome do lanche infantil do McDonald’s?',answer:'McLanche Feliz',
+ options:['McLanche Feliz','Combo Kids','McKids','Lanche Divertido'],
+ fact:'E a caixinha virava brinquedo depois que o brinquedo enjoava.'},
+{art:'mouse',q:'O que é isso?',answer:'Mouse de bolinha',
+ options:['Mouse de bolinha','Controle remoto','Grampeador','Secador de viagem'],
+ fact:'Abrir, tirar a sujeira dos roletes, fechar. Manutenção de hardware aos nove anos.'},
+{text:'“Tuuu… krrr… chiiiii…”',q:'Esse som era o quê?',answer:'A internet discada conectando',
+ options:['A internet discada conectando','Um fax chegando','A impressora matricial','O rádio AM'],
+ fact:'Trinta segundos de barulho pra chegar numa página que demorava mais trinta.'},
+{art:'telefone',q:'O que é isso?',answer:'Telefone de disco',
+ options:['Telefone de disco','Cofre','Rádio de pilha','Despertador'],
+ fact:'Errar o último número significava discar tudo de novo. Não existia backspace.'},
+{text:'O cartucho do videogame não pegava.',q:'Qual era o procedimento oficial?',answer:'Assoprar',
+ options:['Assoprar','Molhar o contato','Bater na TV','Trocar a pilha'],
+ fact:'Não tinha base científica nenhuma. Funcionava mesmo assim.'},
+{art:'gude',q:'O que é isso?',answer:'Bolinha de gude',
+ options:['Bolinha de gude','Bala de goma','Pedra de aquário','Olho de boneca'],
+ fact:'A primeira economia paralela da escola, com câmbio próprio e tudo.'},
+{art:'suco',q:'O que é isso?',answer:'Suco de caixinha',
+ options:['Suco de caixinha','Leite condensado','Achocolatado em pó','Iogurte de garrafa'],
+ fact:'O canudo vinha colado atrás e caía no chão em 100% das vezes.'},
+{text:'Você estava online e alguém tirou o telefone do gancho.',q:'O que acontecia?',answer:'A internet caía',
+ options:['A internet caía','A página carregava mais rápido','Nada','O computador desligava'],
+ fact:'Brigas domésticas inteiras nasceram disso.'},
+{art:'piao',q:'O que é isso?',answer:'Pião',
+ options:['Pião','Sino','Pêndulo','Chapéu'],
+ fact:'Enrolar a corda rápido dava status imediato no recreio.'},
+{art:'gloss',q:'O que é isso?',answer:'Gloss de potinho',
+ options:['Gloss de potinho','Pote de slime','Tinta guache','Pomada'],
+ fact:'Cheiro de morango, textura de cola e zero poder de hidratação.'},
+{art:'lembrancinha',q:'O que é isso?',answer:'Lembrancinha de aniversário',
+ options:['Lembrancinha de aniversário','Saquinho de pipoca','Algodão doce','Buquê'],
+ fact:'Entregue na porta, na hora de ir embora. E aberta antes mesmo de chegar no carro.'},
+{art:'tv',q:'O que é isso?',answer:'TV de tubo',
+ options:['TV de tubo','Micro-ondas','Aquário','Computador antigo'],
+ fact:'A antena de orelha de coelho foi a primeira infraestrutura de rede da casa.'},
+{art:'pipa',q:'O que é isso?',answer:'Pipa',
+ options:['Pipa','Guarda-chuva','Bandeirinha de festa','Barco de papel'],
+ fact:'Papagaio, raia, arraia, pandorga. O nome muda a cada estado do país.'},
+{text:'“Jogo da Vida. Banco Imobiliário.”',q:'Qual fabricante brasileira lançou esses dois?',answer:'Estrela',
+ options:['Estrela','Grow','Elka','Tectoy'],
+ fact:'Tabuleiro na mesa da sala num domingo de chuva era a programação inteira.'},
+{text:'“Caverna do Dragão.”',q:'Como as crianças foram parar no mundo mágico?',answer:'Num brinquedo de parque de diversões',
+ options:['Num brinquedo de parque de diversões','Por um portal na escola','Num naufrágio','Num sonho'],
+ fact:'Entraram numa montanha-russa e nunca mais voltaram. O desenho terminou sem final.'},
+{text:'“Barney.”',q:'Que bicho era?',answer:'Um dinossauro roxo',
+ options:['Um dinossauro roxo','Um urso roxo','Um dragão rosa','Um elefante lilás'],
+ fact:'Dividia opinião em casa: as crianças amavam, os adultos nem tanto.'}
+];
+
+const ERA_ITEMS=[
+{t:'Boneco do Fofão',y:1985},
+{t:'Vitrola e disco de vinil em casa',y:1986},
+{t:'Telefone de disco em casa',y:1987},
+{t:'Bombril na ponta da antena',y:1989},
+{t:'Videocassete e fita de locadora',y:1990},
+{t:'Assoprar cartucho de videogame',y:1993},
+{t:'Figurinha trocada no recreio',y:1995},
+{t:'Papel de carta colecionável',y:1996},
+{t:'Tazo dentro do salgadinho',y:1996},
+{t:'Disquete pra entregar trabalho',y:1997},
+{t:'Bichinho virtual no chaveiro',y:1998},
+{t:'Internet discada',y:2001},
+{t:'Jogo da cobrinha no celular',y:2002},
+{t:'CD gravado com música baixada a noite inteira',y:2003},
+{t:'MSN com nick entre parênteses',y:2004},
+{t:'Fotolog',y:2005},
+{t:'Orkut e depoimento',y:2006},
+{t:'Pen drive na mochila',y:2010},
+{t:'Jogar no celular da mãe',y:2013},
+{t:'Canal de YouTube infantil',y:2015}
+];
+
+const ERAS=[
+{max:1991.9,name:'Criança dos anos 80',desc:'Você viu a televisão ganhar controle remoto e achou aquilo o futuro chegando.'},
+{max:1999.9,name:'Criança dos anos 90',desc:'Sua infância tem trilha sonora de modem discando e cheiro de papel de carta.'},
+{max:2008.9,name:'Criança dos anos 2000',desc:'Você aprendeu a digitar rápido porque a conversa não podia esfriar.'},
+{max:9999,name:'Criança dos anos 2010',desc:'Você nunca precisou esperar nada carregar. A gente tem inveja.'}
+];
+
+const TIME=20000;
+let idx=0,score=0,correct=0,marks=[],playerName='',locked=false,tStart=0,raf=0;
+let chosen=new Set(),myEra='';
+
+const $=id=>document.getElementById(id);
+const show=id=>['s-start','s-quiz','s-era','s-end'].forEach(s=>$(s).classList.toggle('hidden',s!==id));
+const esc=t=>{const d=document.createElement('span');d.textContent=t;return d.innerHTML};
+
+$('name').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click()});
+$('go').addEventListener('click',()=>{
+  const v=$('name').value.trim(); if(!v){$('name').focus();return}
+  playerName=v; idx=0; score=0; correct=0; marks=[]; chosen=new Set();
+  show('s-quiz'); window.scrollTo(0,0); render();
+});
+$('next').addEventListener('click',()=>{idx++; if(idx>=QUESTIONS.length) toEra(); else render()});
+$('done').addEventListener('click',finish);
+$('again').addEventListener('click',()=>{show('s-start');window.scrollTo(0,0)});
+
+function shuffle(a){const r=a.slice();for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+
+function drawPips(){
+  $('pips').innerHTML=QUESTIONS.map((_,i)=>{
+    const c=marks[i]===true?'hit':marks[i]===false?'miss':i===idx?'now':'';
+    return '<i class="pip '+c+'"></i>';
+  }).join('');
+}
+
+function render(){
+  const q=QUESTIONS[idx]; locked=false;
+  $('qn').textContent=idx+1;
+  drawPips();
+  const st=$('stage');
+  if(q.art){st.className='stage';st.innerHTML=ART[q.art]}
+  else{st.className='stage text';st.innerHTML='<b>'+esc(q.text)+'</b>'}
+  $('prompt').textContent=q.q;
+  $('fact').classList.add('hidden');
+  $('next').classList.add('hidden');
+  $('clock').classList.remove('warn');
+  $('clockbar').style.width='100%';
+
+  const labels=shuffle(q.options);
+  $('opts').innerHTML=labels.map(()=>'<button class="opt" type="button"></button>').join('');
+  [...$('opts').children].forEach((b,i)=>{
+    b.textContent=labels[i];
+    b.addEventListener('click',()=>answer(labels[i],b));
+  });
+  tStart=performance.now(); cancelAnimationFrame(raf); tick();
+}
+
+function tick(){
+  if(locked) return;
+  const left=TIME-(performance.now()-tStart);
+  if(left<=0){answer(null,null);return}
+  $('clockbar').style.width=(left/TIME*100)+'%';
+  $('clock').classList.toggle('warn',left<6000);
+  raf=requestAnimationFrame(tick);
+}
+
+function answer(choice,btn){
+  if(locked) return;
+  locked=true; cancelAnimationFrame(raf);
+  const q=QUESTIONS[idx];
+  const left=Math.max(0,TIME-(performance.now()-tStart));
+  const ok=choice===q.answer;
+  marks[idx]=ok;
+  if(ok){correct++;score+=100+Math.round(50*left/TIME)}
+  drawPips();
+  [...$('opts').children].forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===q.answer) b.classList.add('right');
+    else if(b===btn) b.classList.add('wrong');
+    else b.classList.add('fade');
+  });
+  const head=ok?'Isso.':choice===null?'Acabou o tempo.':'Era '+q.answer+'.';
+  $('fact').innerHTML='<b>'+esc(head)+'</b>'+esc(q.fact);
+  $('fact').classList.remove('hidden');
+  $('next').textContent=idx===QUESTIONS.length-1?'Última parte':'Próxima';
+  $('next').classList.remove('hidden');
+}
+
+function toEra(){
+  show('s-era'); window.scrollTo(0,0);
+  $('chips').innerHTML=ERA_ITEMS.map((it,i)=>
+    '<button class="chip" type="button" aria-pressed="false" data-i="'+i+'">'+esc(it.t)+'</button>').join('');
+  [...$('chips').children].forEach(b=>{
+    b.addEventListener('click',()=>{
+      const i=+b.dataset.i;
+      if(chosen.has(i)){chosen.delete(i);b.setAttribute('aria-pressed','false')}
+      else{chosen.add(i);b.setAttribute('aria-pressed','true')}
+    });
+  });
+}
+
+function finish(){
+  show('s-end'); window.scrollTo(0,0);
+  $('finalScore').textContent=score;
+  $('finalLine').textContent=correct+' de 18 certas, '+playerName+'.';
+  $('verdict').textContent=correct===18?'Memória intacta':correct>=13?'Quase tudo':correct>=9?'Lembra do essencial':'Nasceu tarde demais';
+
+  if(chosen.size){
+    const ys=[...chosen].map(i=>ERA_ITEMS[i].y).sort((a,b)=>a-b);
+    const m=ys.length%2 ? ys[(ys.length-1)/2] : (ys[ys.length/2-1]+ys[ys.length/2])/2;
+    const e=ERAS.find(x=>m<=x.max);
+    myEra=e.name;
+    $('eraName').textContent=e.name;
+    $('eraDesc').textContent=e.desc;
+  }else{
+    myEra='';
+    $('eraName').textContent='Sem época definida';
+    $('eraDesc').textContent='Você não marcou nada, então a gente não tem como saber. Volta e marca.';
+  }
+}
+
+</script>
+</body>
+</html>
